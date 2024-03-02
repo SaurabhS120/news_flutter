@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_flutter/base_page/home_page.dart';
+import 'package:news_flutter/base_page/base_page.dart';
 class HomePage extends BasePage {
   const HomePage({super.key});
   @override
