@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-abstract class BasePage<T extends BasePageState> extends StatefulWidget {
+abstract class BasePage extends StatefulWidget {
   const BasePage({super.key});
 
   @override
   State<BasePage> createState();
 }
 
-abstract class BasePageState extends State<BasePage> {
+abstract class BasePageState<T extends BasePage> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
