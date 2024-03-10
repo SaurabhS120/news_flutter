@@ -75,6 +75,6 @@ class HomePageViewModel{
   /// This function will be called from UI to fetch data from data layer
   /// After fetching data it will add data into stream which UI will listen and update UI
   void getNewsList()async{
-    _news_list_subject.add(await newsRepo.getNews());
+    _news_list_subject.add(await getNewsUseCase.execute(GetNewsUseCaseParams()));
   }
 }
