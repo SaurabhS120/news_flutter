@@ -1,3 +1,4 @@
+import 'package:domain/model/news_model.dart';
 import 'package:flutter/material.dart';
 import 'package:news_flutter/base_page/base_page.dart';
 class HomePage extends BasePage {
@@ -51,9 +52,4 @@ class HomePageViewModel{
     NewsModel(title: 'Jamnagar airport gets international status for Anant Ambani’s pre-wedding bash'),
     NewsModel(title: 'An encounter with unique marine wonders in Visakhapatnam'),
   ];
-}
-class NewsModel{
-  final String title;
-
-  NewsModel({required this.title});
 }
