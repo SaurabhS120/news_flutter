@@ -2,6 +2,7 @@ import 'package:data_dummy/news_repo_impl.dart';
 import 'package:domain/errors/base_error.dart';
 import 'package:domain/model/news_model.dart';
 import 'package:domain/repo/news_repo.dart';
+import 'package:domain/usecase/get_news_usecase.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:news_flutter/base_page/base_page.dart';
@@ -52,7 +53,8 @@ class HomePageView extends StatelessWidget {
   }
 }
 class HomePageViewModel{
-  NewsRepo newsRepo = NewsRepoDummyImpl();
+  late NewsRepo newsRepo = NewsRepoDummyImpl();
+  late GetNewsUseCase getNewsUseCase = GetNewsUseCase(newsRepo);
   HomePageViewModel(){
     getNewsList();
   }
