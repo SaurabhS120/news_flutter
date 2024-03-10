@@ -2,7 +2,15 @@ import 'package:domain/errors/base_error.dart';
 import 'package:domain/model/news_model.dart';
 import 'package:domain/repo/news_repo.dart';
 import 'package:either_dart/either.dart';
+
+/// This is the implementation of Repo in domain layer
+/// This will be the actual implementation which will be responsible for api or
+/// database call in order to fetch data
 class NewsRepoDummyImpl implements NewsRepo{
+
+  ///This is the implementation for function of domain layer repo
+  /// This will be the actual implementation which will be responsible for api or
+  /// database call in order to fetch data
   @override
   Future<Either<List<NewsModel>,BaseError>> getNews() {
     final List<NewsModel> newsList = [
