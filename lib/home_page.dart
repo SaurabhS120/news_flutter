@@ -1,5 +1,12 @@
+import 'package:data_dummy/news_repo_impl.dart';
+import 'package:domain/errors/base_error.dart';
+import 'package:domain/model/news_model.dart';
+import 'package:domain/repo/news_repo.dart';
+import 'package:domain/usecase/get_news_usecase.dart';
+import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:news_flutter/base_page/base_page.dart';
+import 'package:rxdart/rxdart.dart';
 class HomePage extends BasePage {
   HomePageViewModel model = HomePageViewModel();
   HomePage({super.key});
@@ -26,34 +33,48 @@ class HomePageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return ListView.separated(
-     itemBuilder: (BuildContext context,int index){
-       return Padding(
-         padding: const EdgeInsets.all(16.0),
-         child: Text(model.newsList[index].title),
+   return StreamBuilder<Either<List<NewsModel>,BaseError>>(
+     stream: model.news_list_stream,
+     builder: (context, newsList) {
+       return ListView.separated(
+         itemBuilder: (BuildContext context,int index){
+           return Padding(
+             padding: const EdgeInsets.all(16.0),
+             child: Text(newsList.data?.left[index].title??''),
+           );
+         },
+         separatorBuilder: (BuildContext context,int index){
+           return Divider();
+         },
+         itemCount: newsList.data?.left.length??0,
        );
-     },
-     separatorBuilder: (BuildContext context,int index){
-       return Divider();
-     },
-     itemCount: model.newsList.length,
+     }
    );
   }
 }
-class HomePageViewModel{
-  final List<NewsModel> newsList = [
-    NewsModel(title: 'Nikki Halley raises \$12 million in February, bags first Senate endorsement, but rules out third-party run'),
-    NewsModel(title: 'Drone crash damages an apartment building in St. Petersburg, Russia state media says'),
-    NewsModel(title: 'Despite hectic discussions, WTO MC13 ends with no deals on fisheries, agriculture'),
-    NewsModel(title: 'Biden approves military air drops of aid into Gaza after Israeli firing left more than 100 dead'),
-    NewsModel(title: 'Top news of the day: Nine injured in blast at Bengaluru’s Rameshwaram Cafe; Defence Ministry seals procurement deals worth ₹39,125 crore, and more'),
-    NewsModel(title: 'Thailand replaces its Ambassador to WTO following strong protest by India on her remarks'),
-    NewsModel(title: 'Jamnagar airport gets international status for Anant Ambani’s pre-wedding bash'),
-    NewsModel(title: 'An encounter with unique marine wonders in Visakhapatnam'),
-  ];
-}
-class NewsModel{
-  final String title;
 
-  NewsModel({required this.title});
+/// View model will handle communication between UI and data layer
+/// Responsibilities:
+/// Fetching data from data layer and notifying its response to UI
+/// To hold UI state, required controllers
+/// Calculations like validation, data filtration, sorting
+class HomePageViewModel{
+  late NewsRepo newsRepo = NewsRepoDummyImpl();
+  late GetNewsUseCase getNewsUseCase = GetNewsUseCase(newsRepo);
+  HomePageViewModel(){
+    getNewsList();
+  }
+
+  /// Response subject will be private so data can only added so we can restrict adding data from this page only
+  PublishSubject<Either<List<NewsModel>,BaseError>> _news_list_subject = PublishSubject<Either<List<NewsModel>,BaseError>>();
+
+  /// This getter will generate stream from private response subject
+  /// This stream will be used in page in order to make UI changes as per response
+  Stream<Either<List<NewsModel>,BaseError>> get news_list_stream => _news_list_subject.stream;
+
+  /// This function will be called from UI to fetch data from data layer
+  /// After fetching data it will add data into stream which UI will listen and update UI
+  void getNewsList()async{
+    _news_list_subject.add(await getNewsUseCase.execute(GetNewsUseCaseParams()));
+  }
 }
